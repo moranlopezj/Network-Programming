@@ -1,0 +1,165 @@
+public class Main {
+    public static void main(String[] args) {
+        // initialize the tictactoe game
+        TicTacToe ticTacToe = new TicTacToe();
+        
+        // play the game
+        ticTacToe.play();
+
+    }
+}
+import java.util.Scanner;
+
+public class TicTacToe extends Game {
+	private Board board;
+
+    private Player player1;
+    private Player player2;
+
+    TicTacToe() {
+        board = new Board();
+        // player1 with its turn first
+        player1 = new Player('X', "player 1");
+        // player 2 with second turn
+        player2 = new Player('O', "player 2");
+    }
+
+
+    @Override
+    public boolean checkWinner() {
+        // check for first row
+        if ((board.getSymbol(0, 0) == board.getSymbol(0, 1)) && (board.getSymbol(0, 1) == board.getSymbol(0, 2)) && (board.getSymbol(0, 2) != '*'))
+            return true;
+        // check for second row
+        else if ((board.getSymbol(1, 0) == board.getSymbol(1, 1)) && (board.getSymbol(1, 1) == board.getSymbol(1, 2)) && (board.getSymbol(1, 2) != '*'))
+            return true;
+        else if ((board.getSymbol(2, 0) == board.getSymbol(2, 1)) && (board.getSymbol(2, 1) == board.getSymbol(2, 2)) && (board.getSymbol(2, 2) != '*'))
+            return true;
+        else if ((board.getSymbol(0, 0) == board.getSymbol(1, 0)) && (board.getSymbol(1, 0) == board.getSymbol(2, 0)) && (board.getSymbol(2, 0) != '*'))
+            return true;
+        else if ((board.getSymbol(0, 1) == board.getSymbol(1, 1)) && (board.getSymbol(1, 1) == board.getSymbol(2, 1)) && (board.getSymbol(2, 1) != '*'))
+            return true;
+        else if ((board.getSymbol(0, 2) == board.getSymbol(1, 2)) && (board.getSymbol(1, 2) == board.getSymbol(2, 2)) && (board.getSymbol(2, 2) != '*'))
+            return true;
+        else if ((board.getSymbol(0,0) == board.getSymbol(1,1))&&(board.getSymbol(1,1) == board.getSymbol(2,2))&&(board.getSymbol(2,2) != '*'))
+            return true;
+        else return (board.getSymbol(2, 0) == board.getSymbol(1, 1)) && (board.getSymbol(1, 1) == board.getSymbol(0, 2)) && (board.getSymbol(0, 2) != '*');
+    }
+
+    void play(){
+        board.printBoard();
+        Scanner scanner = new Scanner(System.in);
+        Player currentPlayer = player1;
+        int count = 0;
+
+        int numOfMoves = 0;
+        while(numOfMoves < 10){
+            System.out.println(currentPlayer.getName() + " turn: enter " + currentPlayer.getSymbol() + " in the board.");
+            System.out.print("Enter row: ");
+            int row = scanner.nextInt();
+            System.out.print("Enter column: ");
+            int col = scanner.nextInt();
+
+            if (board.isValidMove(row,col)){
+                board.makeMove(row, col, currentPlayer);
+                count++;
+                numOfMoves++;
+                board.printBoard();
+            }else{
+                System.out.println("Invalid move!!");
+                continue;
+            }
+
+            if (count >= 5) {
+                if(checkWinner()){
+                    printWinner(currentPlayer);
+                    break;
+                }
+            }
+
+            // if this was the last move
+            if(count == 9) {
+                System.out.println("Game Over!!");
+                System.out.println("Its a Tie!!");
+                break;
+            }
+
+            if (currentPlayer == player1){
+                currentPlayer = player2;
+            }
+            else {
+                currentPlayer = player1;
+            }
+        }
+    }
+
+
+}
+public abstract class Game {
+    // congratulate the winner
+    public void printWinner(Player player){
+        System.out.println("Game over!!");
+        System.out.println(player.getName() + " won!!!");
+    }
+
+    /**
+     *
+     * @return current player wins or not
+     */
+    public abstract boolean checkWinner();
+}
+public class Player {
+    private char symbol;
+    private String name;
+
+    Player(char symbol, String name) {
+        this.symbol = symbol;
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public char getSymbol(){
+        return symbol;
+    }
+
+}
+import java.util.Arrays;
+
+public class Board {
+    private char board[][] = new char[3][3];
+
+    public Board(){
+//        new board initialization
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                board[i][j] = '*';
+            }
+        }
+    }
+
+    public void printBoard(){
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                System.out.printf("%c ",board[i][j]);
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    public char getSymbol(int row, int col){
+        return board[row][col];
+    }
+
+    // check for a valid move
+    boolean isValidMove(int row, int col){
+        return (row > 0 && row < 4 && col > 0 && col < 4 && board[row-1][col-1] == '*');
+    }
+
+    void makeMove(int row, int column, Player player){
+        board[row-1][column-1] = player.getSymbol();
+    }
+}

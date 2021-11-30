@@ -55,6 +55,9 @@ public class GameServer {
 			try {
 				in = new Scanner(socket.getInputStream());
 				out = new PrintWriter(socket.getOutputStream(), true);
+				
+					Deck d = new Deck();
+					
 					out.printf("%nWelcome to BlackJack%n%n");
 					out.printf("How many human players? ");
 					int numPlayers = in.nextInt();
@@ -62,7 +65,6 @@ public class GameServer {
 					ArrayList<GenericPlayer> players = new ArrayList<>(numPlayers++);
 					
 					for(int i = 0; i < numPlayers; i ++) {
-						out.printf("Enter name of player #%d: ", i++);
 						String name = in.next();
 						Player p = new Player(name);
 						players.add(p);
